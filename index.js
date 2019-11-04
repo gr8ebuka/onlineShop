@@ -1,6 +1,5 @@
 const express = require('express');
-const config = require('config')
-require('dotenv').config()
+const config = require('./src/config')
 const app = express();
 const mongoose = require('mongoose')
 const morgan = require('morgan');
@@ -8,8 +7,11 @@ const bodyParser = require('body-parser');
 const products = require('./routes/product');
 const orders = require('./routes/orders');
 
-console.log('Env: ', config.get('mongo_connect'))
-app.use(morgan('dev'));
+const env = config.get('env');
+console.log('Env: ', config.get('env'))
+if (env === 'development') {
+    app.use(morgan('dev'));
+}
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
