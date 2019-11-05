@@ -1,5 +1,7 @@
 const express = require('express');
 const config = require('./src/config')
+const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 const app = express();
 const mongoose = require('mongoose')
 const morgan = require('morgan');
@@ -49,7 +51,7 @@ app.use((req, res, next)=>{
     //const url = process.env.MONGO_CONNECT
     const url = config.get('mongo_connect')
 
-    mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+    mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
         .then(() => console.log("Conntected to mongodb"))
         .catch(err => console.error('Error connecting to mongo db'))
 

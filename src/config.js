@@ -1,4 +1,5 @@
-const _ = require('./env');
+//const _ = require('./env');
+require('dotenv').config()
 const convict = require("convict");
 
 const config = convict({
