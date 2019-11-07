@@ -1,9 +1,18 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
-
+const ObjectId = require('objectid')
 
 const orderSchema = new mongoose.Schema({
-    product :{ type: mongoose.Schema.Types.ObjectId, ref:'Products', required: true
+    // product : {
+    //     type: new mongoose.Schema({
+    //         // name: String,
+    //        // ref:'Products'
+    //         // price: Number
+            
+    //     })
+    // },
+    product:{
+        type:mongoose.Schema.Types.ObjectId, ref: 'Products'
     },
     quantity: {
         type: Number,
