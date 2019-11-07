@@ -8,13 +8,14 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const products = require('./routes/product');
 const orders = require('./routes/orders');
+const user = require('./routes/user');
 
 const env = config.get('env');
 console.log('Env: ', config.get('env'))
 if (env === 'development') {
     app.use(morgan('dev'));
 }
-
+app.use('/uploads', express.static('uploads'))
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -31,11 +32,13 @@ app.use((req,res, next) => {
             next(   );
 }); 
 
+app.use('/api/users', user)
 app.use('/api/orders', orders);
 app.use('/api/products', products);
 
 app.use((req, res, next)=>{ 
     const error = new Error(' Not found')
+    
     error.status= 404;
     next(error)
     });

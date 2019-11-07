@@ -1,10 +1,23 @@
 const express = require('express');
 const Objectid = require('objectid')
-const {Products} = require('../Schemas/products')
+const {validate, Products} = require('../models/products')
 const router = express.Router();
+const multer = require ('multer');
 
+const storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        console.log(file, cb)
+        cb(null, './uploads/');
+    },
+    filename: function(req, file, cb){
+        cb(null,  Date.now()  + file.originalname )
+      //  cb(null, new Date().toISOString()+ '-' + file.originalname ); //new Date().toISOString() + file.originalname);
+    }
+});
+const  upload = multer({ storage: storage}) ;
+ 
 router.get('/', async (req, res, next)=>{
-    const product = await Products.find().select('name price _id')
+    const product = await Products.find().select('name price _id productImage')
       
     if(product <= 0) {
         res.status(404).json({
@@ -20,6 +33,7 @@ router.get('/', async (req, res, next)=>{
                 return{
                     name: product.name,
                     price: product.price,
+                    productImage:[product.productImage],
                     _id: product._id,
                     request:{
                          type: 'GET',
@@ -45,9 +59,11 @@ router.get('/:id', async (req, res, next)=>{
   
 })
 
-router.patch('/:id',  async(req, res, next)=>{ 
+router.put('/:id',  async(req, res, next)=>{ 
+    const {error} = validate(req.body)
+    if(error) return res.status(400).send(error.details[0].message)
    
-    let product = await Products.update( req.params.id ,     { 
+    let product = await Products.findByIdAndUpdate( req.params.id ,     { 
             name:req.body.name,     
             price: req.body.price   ,
          },       
@@ -61,37 +77,41 @@ router.delete('/:id', async (req, res, next)=>{
     if(!validId) return res.status(400).json({
         message:'Invalid product id'
      })
-     const product = await Products.findByIdAndDelete(req.params.id)
+     const product = await Products.findByIdAndRemove(req.params.id)
      if(!product) return res.status(400).send('Product ID does not exist')
      res.send(product)
-    // res.status(200).json({
-    //     message: 'Deleted product'
-    // });
+  
 })
-router.post('/',  async(req, res, next) => {
-    
-    const products = await new Products({
-        name:req.body.name,
-        price:req.body.price
-
+router.post('/', upload.array('productImage', 3), async(req, res, next) => {
+    try {
+         const {error} = validate(req.body)
+         if(error) return res.status(400).send(error.details[0].message)
          
-    })
-    products.save()
-    res.status(201).json({
-        message:'New Product added',
-        product:{
-            _id:products._id,
-            name:products.name,
-           price: products.price,
-            request:{
-                type: 'GET',
-                url: 'http://localhost:3000/api/products/'+ products._id
-
-            }
-        }
-    })
-    
-       
+         const products = await new Products({
+             name:req.body.name,
+             price:req.body.price,
+             productImage:req.files.path
+         })
+         products.save()
+         res.status(201).json({
+             message:'New Product added',
+             product:{
+                 _id:products._id,
+                 name:products.name,
+                price: products.price,
+                productImage:products.productImage, 
+                 request:{
+                     type: 'GET',
+                     url: 'http://localhost:3000/api/products/'+ products._id
+     
+                 }
+             }
+         })
+         
+    } catch (error) {
+        throw error        
+    }
+   
 });
 
 module.exports = router
