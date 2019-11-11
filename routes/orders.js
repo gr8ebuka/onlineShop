@@ -18,6 +18,7 @@ router.get('/' , async(req, res, next)=>{
         count: orders.lenght,
         Orders: orders.map( orders => {
             return {
+                uuid:orders.uuid,
                 _id:orders._id,
                 product: orders.product,
                 quantity: orders.quantity,

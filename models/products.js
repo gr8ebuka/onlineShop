@@ -3,7 +3,7 @@ const Joi = require('joi')
 const productSchema = new mongoose.Schema({
     name: {type:String, required: true },
     price: {type:Number, required: true},
-    productImage: {type: Array, required: true}
+    productImage: {type: [String], required: true}
 })
 
 const Products = mongoose.model('Products', productSchema)

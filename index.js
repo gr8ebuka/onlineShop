@@ -52,11 +52,15 @@ app.use((req, res, next)=>{
     });
 
     //const url = process.env.MONGO_CONNECT
-    const url = config.get('mongo_connect')
+    // const url = config.get('mongo_connect')
 
-    mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
-        .then(() => console.log("Conntected to mongodb"))
-        .catch(err => console.error('Error connecting to mongo db'))
+    // mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+    //     .then(() => console.log("Conntected to mongodb"))
+    //     .catch(err => console.error('Error connecting to mongo db'))
+    mongoose.connect('mongodb://localhost/onlinshop', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
  const port = process.env.PORT || 3000;
 app.listen(port, ()=> console.log(`Listening on port ${port}..`))

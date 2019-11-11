@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 const ObjectId = require('objectid')
+const uuid = require('uuid')
 
 const orderSchema = new mongoose.Schema({
     // product : {
@@ -11,6 +12,9 @@ const orderSchema = new mongoose.Schema({
             
     //     })
     // },
+    uuid:{
+        type: String, default: uuid.v4
+    },
     product:{
         type:mongoose.Schema.Types.ObjectId, ref: 'Products'
     },

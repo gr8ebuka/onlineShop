@@ -4,7 +4,7 @@ const router = express.Router();
 const {User, validate } = require('../models/users');
 const bcrypt = require('bcrypt');
 
-router.post('/' , async(req, res) => {
+router.post('/signup' , async(req, res) => {
     
     const {error } = validate(req.body)
     if (error) return res.status(400).send(error.details[0].message);
@@ -32,6 +32,36 @@ router.post('/' , async(req, res) => {
     });
 
 });
+
+router.post('/login' , async (req, res, next) => {
+    const { error} = validate(req.body);
+    if ( error ) return  res.status(400).send(error.details[0].message);
+
+    let user = await User.findOne({email:req.body.email});
+    if (!user) return res.status(400).send('Wrong Email or password');
+
+    const validPass = await bcrypt.compare(req.body.password, user.password)
+    if (!validPass) return res.status(400).send('Wrong Email or password');
+
+    user = await new User({
+        email:req.body.email,
+        password:req.body.password
+    })
+    //user.save()
+    res.status(201).json({
+        message: 'User logged in',
+        user: {
+            _id:user._id,
+            email:user.email,
+            
+        }
+    })
+
+
+
+    
+});    
+
 router.get('/:id', async (req, res, next)=>{
     const validId = Objectid.isValid(req.params.id)
     if(!validId) return res.status(400).json({
@@ -50,12 +80,13 @@ router.delete('/:id', async (req, res, next)=>{
    
     if(!validId) return res.status(400).json({
         message:'Invalid user id'
-     })
+     });
 
-     const user = await User.findByIdAndDelete(req.params.id)
-     if(!user) return res.status(400).send('user ID does not exist')
-     res.send(user)
-     console.log(user)
+     const user = await User.findByIdAndDelete(req.params.id);
+     if(!user) return res.status(400).send('user ID does not exist');
+
+     res.send(user);
+     console.log(user);
   
 })
 

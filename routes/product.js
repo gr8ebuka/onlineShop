@@ -6,7 +6,7 @@ const multer = require ('multer');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
-        console.log(file, cb)
+       
         cb(null, './uploads/');
     },
     filename: function(req, file, cb){
@@ -90,8 +90,9 @@ router.post('/', upload.array('productImage', 3), async(req, res, next) => {
          const products = await new Products({
              name:req.body.name,
              price:req.body.price,
-             productImage:req.files.path
+             productImage:req.files.map(({path}) => path)
          })
+         console.log(products)
          products.save()
          res.status(201).json({
              message:'New Product added',
