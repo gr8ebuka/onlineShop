@@ -1,3 +1,4 @@
 {
-    "mongo_connect": ""
+    "mongo_connect": "",
+    "jwt_key": "secret"
 }
