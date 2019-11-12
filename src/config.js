@@ -16,6 +16,13 @@ const config = convict({
         default: '',
         env: 'MONGO_CONNECT',
         arg: 'MONGO_CONNECT'
+    },
+    jwt_key:{
+      doc: 'The application environment',
+      format: String,
+      default: '',
+      env: 'JWT_PriavteKey',
+      arg: 'JWT_PrivateKey'
     }
 });
 

@@ -1,8 +1,11 @@
 const express = require('express');
-const Objectid = require('objectid')
+const Objectid = require('objectid');
 const router = express.Router();
 const {User, validate } = require('../models/users');
 const bcrypt = require('bcrypt');
+const config = require('config');
+const jwt = require('jsonwebtoken');
+
 
 router.post('/signup' , async(req, res) => {
     
@@ -47,29 +50,27 @@ router.post('/login' , async (req, res, next) => {
         email:req.body.email,
         password:req.body.password
     })
+    const token = user.generateAuthToken()
     //user.save()
-    res.status(201).json({
+    res.header('x-auth-token', token).status(201).json({
         message: 'User logged in',
         user: {
             _id:user._id,
             email:user.email,
-            
+            //token:token            
         }
     })
 
-
-
-    
 });    
 
-router.get('/:id', async (req, res, next)=>{
-    const validId = Objectid.isValid(req.params.id)
-    if(!validId) return res.status(400).json({
-        message:'no user found'
-     })
+router.get('/', async (req, res, next)=>{
+    // const validId = Objectid.isValid(req.params.id)
+    // if(!validId) return res.status(400).json({
+    //     message:'no user found'
+    //  })
     
-         const user = await User.findById( req.params.id);
-         if(!user) return res.status(400).send('user ID does not exist')
+         const user = await User.find( );
+        // if(!user) return res.status(400).send('user ID does not exist')
          res.send(user)
    
  });

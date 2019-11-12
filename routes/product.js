@@ -3,6 +3,7 @@ const Objectid = require('objectid')
 const {validate, Products} = require('../models/products')
 const router = express.Router();
 const multer = require ('multer');
+const auth = require('../middleware/auth')
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -82,7 +83,7 @@ router.delete('/:id', async (req, res, next)=>{
      res.send(product)
   
 })
-router.post('/', upload.array('productImage', 3), async(req, res, next) => {
+router.post('/', auth, upload.array('productImage', 3), async(req, res, next) => {
     try {
          const {error} = validate(req.body)
          if(error) return res.status(400).send(error.details[0].message)
