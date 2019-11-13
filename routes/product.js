@@ -3,7 +3,7 @@ const Objectid = require('objectid')
 const {validate, Products} = require('../models/products')
 const router = express.Router();
 const multer = require ('multer');
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -32,6 +32,7 @@ router.get('/', async (req, res, next)=>{
          count: product.length,
                 Product: product.map( product => {
                 return{
+                    uuid:product.uuid,
                     name: product.name,
                     price: product.price,
                     productImage:[product.productImage],
@@ -49,31 +50,44 @@ router.get('/', async (req, res, next)=>{
 });
 
 router.get('/:id', async (req, res, next)=>{
+//     console.log("params", req.params)
+//  const  uuid = req.params.id
+//  console.log('uuid' ,uuid)
+ 
    const validId = Objectid.isValid(req.params.id)
    if(!validId) return res.status(400).json({
        message:'Invalid product id'
     })
    
         const product = await Products.findById( req.params.id);
+        console.log('Product: ', product)
         if(!product) return res.status(400).send('Product ID does not exist')
         res.send(product)
   
 })
 
-router.put('/:id',  async(req, res, next)=>{ 
+router.put('/:id',  auth,  upload.array('productImage', 3),async(req, res, next)=>{ 
+    console.log('Req: ', req.body)
     const {error} = validate(req.body)
     if(error) return res.status(400).send(error.details[0].message)
-   
-    let product = await Products.findByIdAndUpdate( req.params.id ,     { 
+    const validId = Objectid.isValid(req.params.id)
+    if(!validId) return res.status(400).json({
+       message:'Invalid product id'
+    })
+      
+    let product = await Products.findByIdAndUpdate( req.params.id,  {$set:  { 
             name:req.body.name,     
-            price: req.body.price   ,
-         },       
+            price: req.body.price ,
+            productImage:req.files.map(({path})=> path),
+          }},       
          
           {new:true})
+         
             res.send(product)
+           
 })
 
-router.delete('/:id', async (req, res, next)=>{
+router.delete('/:id', auth,  async (req, res, next)=>{
     const validId = Objectid.isValid(req.params.id)
     if(!validId) return res.status(400).json({
         message:'Invalid product id'
@@ -99,6 +113,7 @@ router.post('/', auth, upload.array('productImage', 3), async(req, res, next) =>
              message:'New Product added',
              product:{
                  _id:products._id,
+                 uuid:products.uuid,
                  name:products.name,
                 price: products.price,
                 productImage:products.productImage, 

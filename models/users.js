@@ -12,7 +12,7 @@ const config = require('config')
      },
      password:{
          type: String, required: true, minlength: 6
-     }
+     } 
  })
  
  userSchema.methods.generateAuthToken = function(){
