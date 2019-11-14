@@ -49,6 +49,7 @@ exports.getOneOrder = async(req, res, next) => {
         if(error) return res.status(400).send(error.details[0].message)
 
     const product = await Products.findById(req.body.productId).populate('product')
+    console.log(product)
             if(!product) return res.status(400).send('Invalid product ID')
                     let  order = await new Order({
                     product :{_id: req.body.productId},

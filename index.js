@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const products = require('./routes/product');
 const orders = require('./routes/orders');
 const user = require('./routes/user');
+const cart = require('./routes/cart');
 
 const env = config.get('env');
 console.log('Env: ', config.get('env'))
@@ -29,12 +30,13 @@ app.use((req,res, next) => {
             res.header('Access-Control-Allow-Methods', 'PUT, POST, DELETE, PATCH, GET')
                 returnres.status(200).json({})
             };
-            next(   );
+            next();
 }); 
 
 app.use('/api/users', user)
 app.use('/api/orders', orders);
-app.use('/api/products', products);
+app.use('/api/products', products)
+app.use('/api/carts', cart);
 
 app.use((req, res, next)=>{ 
     const error = new Error(' Not found')

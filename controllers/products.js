@@ -42,6 +42,18 @@ exports.getOneProduct = async (req, res, next)=>{
    
  }
 
+//  exports.getManyProductsWithIds = async (req, res, next)=>{
+//     // const validId = Objectid.isValid(req.params.ids)
+//     // if(!validId) return res.status(400).json({
+//     //     message:'Invalid product id'
+//     //  })
+    
+//          const products = await Product.find({ _id: { $in: req.params.ids } });
+//          if(!products.length) return res.status(400).send('Product ID does not exist')
+//          res.send(products)
+   
+//  }
+
  exports.updateProduct = async(req, res, next)=>{ 
     const {error} = validate(req.body)
     if(error) return res.status(400).send(error.details[0].message)
@@ -77,10 +89,11 @@ exports.createProduct = async(req, res, next) => {
     try {
          const {error} = validate(req.body)
          if(error) return res.status(400).send(error.details[0].message)
-         
+          
          const products = await new Products({
              name:req.body.name,
              price:req.body.price,
+             numberInStock: req.body.numberInStock,
              productImage:req.files.map(({path}) => path)
          })
          console.log(products)
@@ -89,6 +102,7 @@ exports.createProduct = async(req, res, next) => {
              message:'New Product added',
              product:{
                  _id:products._id,
+                 numberInStock:products.numberInStock,
                  name:products.name,
                 price: products.price,
                 productImage:products.productImage, 
