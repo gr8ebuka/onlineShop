@@ -7,9 +7,9 @@ const mongoose = require('mongoose')
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const products = require('./routes/product');
-const orders = require('./routes/orders');
-const user = require('./routes/user');
-const cart = require('./routes/cart');
+const checkout = require('./routes/checkOut');
+const users = require('./routes/user');
+const carts = require('./routes/cart');
 
 const env = config.get('env');
 console.log('Env: ', config.get('env'))
@@ -33,10 +33,10 @@ app.use((req,res, next) => {
             next();
 }); 
 
-app.use('/api/users', user)
-app.use('/api/orders', orders);
+app.use('/api/users', users)
+app.use('/api/checkout', checkout);
 app.use('/api/products', products)
-app.use('/api/carts', cart);
+app.use('/api/carts', carts);
 
 app.use((req, res, next)=>{ 
     const error = new Error(' Not found')

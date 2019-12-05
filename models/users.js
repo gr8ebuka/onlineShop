@@ -10,6 +10,9 @@ const config = require('config')
      email: {
          type: String, required: true, unique:true
      },
+     phone: {
+         type: String, required: true
+     },
      password:{
          type: String, required: true, minlength: 6
      }
@@ -21,7 +24,7 @@ const config = require('config')
         _id:this._id},
            process.env.JWT_PrivateKey,
         //config.get('jwt_key'),
-        {expiresIn: '1h'}
+        {expiresIn: '24h'}
           )
           return token
  }
@@ -32,7 +35,8 @@ const config = require('config')
      const schema ={
          name: Joi.string(),
          email:Joi.string().required().email(),
-         password:Joi.string().required().min(5)
+         password:Joi.string().required().min(5),
+        //  phone: Joi.string().required()
      }
      return Joi.validate(user, schema)
  }

@@ -65,7 +65,8 @@ exports.getOneProduct = async (req, res, next)=>{
     let product = await Products.findByIdAndUpdate( req.params.id ,     { 
             name:req.body.name,     
             price: req.body.price,
-            productImage:req.files.map(({path}) => path)
+            productImage: req.files.map(({path}) => path)
+            //productImage:req.files.map(({path}) => path)
 
          },       
          
@@ -94,16 +95,18 @@ exports.createProduct = async(req, res, next) => {
              name:req.body.name,
              price:req.body.price,
              numberInStock: req.body.numberInStock,
-             productImage:req.files.map(({path}) => path)
+             productImage: req.file.path
          })
-         console.log(products)
+
+         console.log({path: req.file.path})
+     
          products.save()
          res.status(201).json({
              message:'New Product added',
              product:{
-                 _id:products._id,
-                 numberInStock:products.numberInStock,
-                 name:products.name,
+                _id:products._id,
+                numberInStock:products.numberInStock,
+                name:products.name,
                 price: products.price,
                 productImage:products.productImage, 
                  request:{
@@ -111,7 +114,7 @@ exports.createProduct = async(req, res, next) => {
                      url: 'http://localhost:3000/api/products/'+ products._id
      
                  }
-             }
+            }
          })
          
     } catch (error)

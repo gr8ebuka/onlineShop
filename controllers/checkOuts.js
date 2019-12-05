@@ -1,11 +1,15 @@
-const {validate, Order} = require('../models/order');
+const {validate, Order} = require('../models/checkOut');
 const {Products} = require('../models/products');
+const {Cart} = require('../models/cart')
 const Objectid = require('objectid');
 
 
 
 exports.getAllOrders =  async(req, res, next)=>{
-        const orders = await Order.find().select('product quantity').populate('product', 'name')
+        const orders = await Order.find()
+            .select('product')
+            // .populate('product', 'name')
+            .populate('cart', 'product quantity')
         console.log(orders)
         if(orders <= 0) {
         res.status(404).json({
@@ -17,10 +21,10 @@ exports.getAllOrders =  async(req, res, next)=>{
             count: orders.lenght,
             Orders: orders.map( orders => {
                 return {
-                    uuid:orders.uuid,
+                   // uuid:orders.uuid,
                     _id:orders._id,
-                    product: orders.product,
-                    quantity: orders.quantity,
+                    cart: orders.cart,
+                    //quantity: orders.cart.quantity,
                     response: {
                         type: 'GET',
                         url: 'http://localhost:3000/api/orders/'+orders._id
@@ -36,7 +40,7 @@ exports.getOneOrder = async(req, res, next) => {
      if(order) 
          {
              res.status(200).json({
-                 message: ' Your order is ver special',
+                 message: ' Your order is very special',
                  Orders : order
              });
          } else {
@@ -48,28 +52,33 @@ exports.getOneOrder = async(req, res, next) => {
         const {error }  = validate(req.body)
         if(error) return res.status(400).send(error.details[0].message)
 
-    const product = await Products.findById(req.body.productId).populate('product')
-    console.log(product)
-            if(!product) return res.status(400).send('Invalid product ID')
-                    let  order = await new Order({
-                    product :{_id: req.body.productId},
-                    quantity:req.body.quantity
-                    })
-                    console.log(order)
+    // const product = await Products.findById(req.body.productId).populate('product')
+    // console.log(product)
+    //         if(!product) return res.status(400).send('Invalid product ID')
+    const cart = await Cart.findById(req.body.cartId).populate('cart', 'product')
+    console.log(cart)
+    if(!cart) return res.status(400).send('Invalid cart Id')
+
+        let  order = await new Order({
+                    cart :{
+                        _id: req.body.cartId,
+                        quantity:cart.quantity
+                    }
+
+        })                  
                 order.save()
 
     res.status(201).json({
             message: 'Handling a Post request on orders',          
             Orders: {
                     _id:order._id,
-                    product:order.product,
-                    quantity:order.quantity,
+                    cart:order.cart,
+                    quantity:cart.quantity,
                     request:{
                         type: 'GET',
                         url: 'http://localhost:3000/api/products/'+ order._id                    
-                }
+                    }
             }
-            
     });
 }
 
