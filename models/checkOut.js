@@ -3,26 +3,19 @@ const Joi = require('joi')
 const ObjectId = require('objectid')
 const uuid = require('uuid')
 
-const orderSchema = new mongoose.Schema({
-//    totalAmout: {
-//     type:mongoose.Schema.Types.ObjectId, ref: 'Products'
-// },
-    cart:{
-        type:mongoose.Schema.Types.ObjectId, ref: 'Cart'
-    },
-    // quantity: {
-    //     type: Number,
-    //     required: true
-    // }
-})
-const Order = mongoose.model('Order', orderSchema)
-function validateOrder(order){
-    const schema = {
-        // productId: Joi.objectId().required(),
-        cartId: Joi.objectId().required()
-    }
-    return Joi.validate(order, schema)
+const checkOutSchema = new mongoose.Schema({
+  cart: {
+    type: mongoose.Schema.Types.ObjectId, ref: 'Cart'
+  },
+  })
+const CheckOut = mongoose.model('CheckOut', checkOutSchema)
+function validateCheckOut(checkOut) {
+  const schema = {
+    
+    cartId: Joi.objectId().required()
+  }
+  return Joi.validate(checkOut, schema)
 }
 
-exports.Order = Order
-exports.validate = validateOrder
+exports.CheckOut = CheckOut
+exports.validate = validateCheckOut

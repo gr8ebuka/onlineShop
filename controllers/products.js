@@ -90,7 +90,7 @@ exports.createProduct = async(req, res, next) => {
          const {error} = validate(req.body)
          if(error) return res.status(400).send(error.details[0].message)
           
-         const products = await new Products({
+         const product = await new Products({
              name:req.body.name,
              price:req.body.price,
              numberInStock: req.body.numberInStock,
@@ -99,18 +99,18 @@ exports.createProduct = async(req, res, next) => {
 
          console.log({path: req.file.path})
      
-         products.save()
+         product.save()
          res.status(201).json({
              message:'New Product added',
              product:{
-                _id:products._id,
-                numberInStock:products.numberInStock,
-                name:products.name,
-                price: products.price,
-                productImage:products.productImage, 
+                _id:product._id,
+                numberInStock:product.numberInStock,
+                name:product.name,
+                price: product.price,
+                productImage:product.productImage, 
                  request:{
                      type: 'GET',
-                     url: 'http://localhost:3000/api/products/'+ products._id
+                     url: 'http://localhost:3000/api/products/'+ product._id
      
                  }
             }
