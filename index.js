@@ -59,7 +59,7 @@ app.use((req, res, next)=>{
     // mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     //     .then(() => console.log("Conntected to mongodb"))
     //     .catch(err => console.error('Error connecting to mongo db'))
-    mongoose.connect('mongodb://localhost/onlinshop', {
+    mongoose.connect('mongodb://localhost/onlineshop', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
