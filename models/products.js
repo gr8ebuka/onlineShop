@@ -12,9 +12,9 @@ function validateProduct(product){
     const schema = {
         name:Joi.string().required(),
         price:Joi.number().required(),
-        numberInStock: Joi.number().required()
+        numberInStock: Joi.number().required(),
       
-        // productImage:Joi.string().required()
+        //productImage:Joi.required()
     }
     return Joi.validate(product, schema)
 }

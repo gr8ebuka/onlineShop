@@ -23,9 +23,8 @@ exports.getAllProducts =async (req, res, next)=>{
                                 url: 'http://localhost:3000/api/products/'+ product._id
                         }
                     }
-            })
-            
-            
+                })
+                       
         }) ;
     }
 }

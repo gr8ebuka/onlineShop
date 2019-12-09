@@ -1,7 +1,7 @@
 const Objectid = require('objectid');
 const {validate, Cart} = require('../models/cart');
 const {Products} = require('../models/products');
-const { User } = require('../models/users');
+//const { User } = require('../models/users');
 
 exports.getOneCart = async(req,res) => {
     
@@ -18,21 +18,41 @@ exports.getOneCart = async(req,res) => {
 
 exports.getAllCart =  async(req, res, next) => {
        
-    const carts = await Cart.find()
-    if(carts <= 0){
-        res.status(400).json({
-            message: 'Cart Empty'
-        })
-    } else {
-        res.status(200).json({
-            count:carts.length,
-            Items: carts.map(carts => {
-                return {
-                      carts                  
-                }
-            })
-        })
-    }
+    // const carts = await Cart.find().populate('product', 'name')
+    // if(carts <= 0){
+    //     res.status(400).json({
+    //         message: 'Cart Empty'
+    //     })
+    // } else {
+    //     res.status(200).json({
+    //         count:carts.length,
+    //         Items: carts.map(carts => {
+    //             return {
+    //                   carts             
+    //             }
+    //         })
+    //         // item: carts,
+    //         // name: product.name
+    //     })
+    // }
+    const cart = await Cart.aggregate([
+        
+      
+         {$lookup: {
+            from: "products",
+            localField: "product",
+            foreignField: "_id",
+            as: "product"
+          
+        }},
+        { $project: {_id: 0, quantity: 1, product:{ name: "$product.name" , price: "$product.price" }}}
+      //  { $pipeline: {$expr: { $eq: ["$cart"]}}}
+        //  { $group: { _id: "$product" , total:  { $sum: "$price"} }}
+    ])
+    
+    res.send(cart)
+  
+    // console.log(cart)
 
 }
 

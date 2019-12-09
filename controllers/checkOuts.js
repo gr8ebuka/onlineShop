@@ -36,16 +36,22 @@ exports.getAllOrders =  async(req, res, next)=>{
 }
 
 exports.getOneOrder = async(req, res, next) => {
-    const order = await Order.findById( req.params.id).populate('products')
-     if(order) 
-         {
-             res.status(200).json({
-                 message: ' Your order is very special',
-                 Orders : order
-             });
-         } else {
-             res.status(400).send('Wrond order Id');
-         }
+    // const order = await Order.findById( req.params.id).populate('products')
+    //  if(order) 
+    //      {
+    //          res.status(200).json({
+    //              message: ' Your order is very special',
+    //              Orders : order
+    //          });
+    //      } else {
+    //          res.status(400).send('Wrond order Id');
+    //      }
+
+    const order = await Order.aggregate([
+        {$match : { _id : req.params.id }},
+        { $group: { _id: "cartId$" , total: {$sum: "${product.price}"}}}
+    ])
+    res.send(order)
  }
 
  exports.createOrder = async(req, res, next)=>{

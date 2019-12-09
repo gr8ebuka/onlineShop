@@ -10,7 +10,8 @@ exports.createUser =  async(req, res) => {
     if(user) return res.status(409).send('User email already exist')
   
     user = await new User({
-        name:req.body.name,
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
         email:req.body.email,
         password:req.body.password,
         phone: req.body.phone
@@ -24,12 +25,13 @@ exports.createUser =  async(req, res) => {
         message: 'New user created',
         User: {
             _id:user._id,
-            name:user.name,
+            name:{
+                FirstName: user.firstName,
+                lastName: user.lastName
+            },
             email:user.email,
             password:user.password,
-            phone:user.phone
-
-    
+            phone:user.phone    
         }
     });
 
@@ -52,12 +54,16 @@ exports.userLogin =async (req, res, next) => {
     const token = user.generateAuthToken()
     //user.save()
     res.header('x-auth-token', token).status(201).json({
-        message: 'User logged in',
-        user: {
-            _id:user._id,
-            email:user.email,
-            //token:token            
-        }
+        message: `Welcome  back  ${user.email}, you are currently logged in`,
+        // user: {
+        //    // _id:user._id,
+        //    name:{
+        //     FirstName: user.firstName,
+        //     lastName: user.lastName
+        //   },
+        //     email:user.email,
+        //     //token:token            
+        // }
     })
 
 }
@@ -82,9 +88,14 @@ exports.getOneUser = async(req, res, next) => {
     //     message:'Invalid user id'
     //  });
 
-    const user = await User.find().select('-password')
+    // const user = await User.find().select('-password')
     
-    console.log('user:  ',user)
-    if(!user) return res.status(400).send('User not found')
+    // console.log('user:  ',user)
+    // if(!user) return res.status(400).send('User not found')
+    // res.send(user)
+
+    const user = await User.aggregate([
+        {$project: {_id: 0, email: 1, phone: 1, fullName: { $concat: ["$firstName" ,  " " , "$lastName" ] } }}
+    ])
     res.send(user)
 }
