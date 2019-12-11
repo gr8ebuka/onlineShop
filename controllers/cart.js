@@ -67,7 +67,7 @@ exports.createCart = async (req, res, next) => {
 
     let cart = await new Cart({
         product: {
-            _id: req.body.productId,
+            _id:[ req.body.productId],
             price: product.price,
             image: product.productIamge
         },
@@ -104,7 +104,7 @@ exports.updateCart = async (req, res) => {
         message: 'Invalid cart id'
     })
 
-    const cart = await Cart.updateOne({ _id: req.params.id }, { $inc: { quantity: 1 } })
+    const cart = await Cart.updateOne({ _id: req.params.id }, { $inc: { quantity: 1, "product.numberInsto": -1 } })
     if (!cart) return res.status(400).send('cart ID does not exist')
 
     res.send(cart)
