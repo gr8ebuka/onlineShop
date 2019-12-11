@@ -10,6 +10,7 @@ const products = require('./routes/product');
 const checkout = require('./routes/checkOut');
 const users = require('./routes/user');
 const carts = require('./routes/cart');
+const payment = require('./routes/payment');
 
 const env = config.get('env');
 console.log('Env: ', config.get('env'))
@@ -32,7 +33,7 @@ app.use((req,res, next) => {
             };
             next();
 }); 
-
+app.use('/api/payment', payment)
 app.use('/api/users', users)
 app.use('/api/checkout', checkout);
 app.use('/api/products', products)
